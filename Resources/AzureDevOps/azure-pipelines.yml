@@ -112,70 +112,70 @@ stages:
       SharedPrefix: ${{ variables.sharedPrefix }}
       StorageAccountName: $(sharedDfcStorageAccountName)
 
-- stage: DeployTo_SIT
-  condition: false
-  variables:
-  - group: mon-shared-all
-  - group: mon-shared-infrastructure-all
-  - template: VariableTemplates\SharedEnvironmentVariables.yml
-  - group: 'KeyVault - mon-sit-shared-kv'
-  - group: mon-shared-sit
-  - group: mon-shared-infrastructure-sit
-  - group: mon-cds-sit
-  - template: VariableTemplates\SitEnvironmentVariables.yml
-  jobs:
-  - template: JobTemplates\Deploy.yml
-    parameters:
-      AzureSubscription: 'mon(cb5ab4a7-dd08-4be3-9d7e-9f68ae30f224)'
-      AcrResourceGroup: $(ACRResourceGroup)
-      AksAdClientApplicationName: $(AksAdClientApplicationName)
-      AksAdServerApplicationName: $(AksAdServerApplicationName)
-      AksNodeResourceGroupName: $(AksNodeResourceGroupName)
-      AksServiceName: $(sharedAksCluster)
-      AksServicePrincipalName: $(AksServicePrincipalName)
-      CertificateIssuerAccountId: $(CertificateIssuerAccountId)
-      CertificateIssuerAdministratorPhoneNumber: $(CertificateIssuerAdministratorPhoneNumber)
-      CertificateIssuerPassword: $(CertificateIssuerPassword)
-      envAbbreviation: ${{ variables.envAbbreviation }}
-      Environment: 'SIT_SHARED'
-      EnvironmentTag: ${{ variables.EnvironmentTag }}
-      ResourceGroup: ${{ variables.resourceGroup }}
-      ParentBusinessTag: ${{ variables.ParentBusinessTag }}
-      ServiceOfferingTag: ${{ variables.ServiceOfferingTag }}
-      SharedKeyVaultName: $(sharedKeyVaultName)
-      SharedPrefix: ${{ variables.sharedPrefix }}
-      StorageAccountName: $(sharedDfcStorageAccountName)
+# - stage: DeployTo_SIT
+#   condition: false
+#   variables:
+#   - group: mon-shared-all
+#   - group: mon-shared-infrastructure-all
+#   - template: VariableTemplates\SharedEnvironmentVariables.yml
+#   - group: 'KeyVault - mon-sit-shared-kv'
+#   - group: mon-shared-sit
+#   - group: mon-shared-infrastructure-sit
+#   - group: mon-cds-sit
+#   - template: VariableTemplates\SitEnvironmentVariables.yml
+#   jobs:
+#   - template: JobTemplates\Deploy.yml
+#     parameters:
+#       AzureSubscription: 'mon(cb5ab4a7-dd08-4be3-9d7e-9f68ae30f224)'
+#       AcrResourceGroup: $(ACRResourceGroup)
+#       AksAdClientApplicationName: $(AksAdClientApplicationName)
+#       AksAdServerApplicationName: $(AksAdServerApplicationName)
+#       AksNodeResourceGroupName: $(AksNodeResourceGroupName)
+#       AksServiceName: $(sharedAksCluster)
+#       AksServicePrincipalName: $(AksServicePrincipalName)
+#       CertificateIssuerAccountId: $(CertificateIssuerAccountId)
+#       CertificateIssuerAdministratorPhoneNumber: $(CertificateIssuerAdministratorPhoneNumber)
+#       CertificateIssuerPassword: $(CertificateIssuerPassword)
+#       envAbbreviation: ${{ variables.envAbbreviation }}
+#       Environment: 'SIT_SHARED'
+#       EnvironmentTag: ${{ variables.EnvironmentTag }}
+#       ResourceGroup: ${{ variables.resourceGroup }}
+#       ParentBusinessTag: ${{ variables.ParentBusinessTag }}
+#       ServiceOfferingTag: ${{ variables.ServiceOfferingTag }}
+#       SharedKeyVaultName: $(sharedKeyVaultName)
+#       SharedPrefix: ${{ variables.sharedPrefix }}
+#       StorageAccountName: $(sharedDfcStorageAccountName)
 
-- stage: DeployTo_LAB
-  condition: false
-  variables:
-  - group: mon-shared-all
-  - group: mon-shared-infrastructure-all
-  - template: VariableTemplates\SharedEnvironmentVariables.yml
-  - group: 'KeyVault - mon-lab-shared-kv'
-  - group: mon-shared-lab
-  - group: mon-shared-infrastructure-lab
-  - group: mon-cds-dev # this mimics the configuration in the classic release definition
-  - template: VariableTemplates\LabEnvironmentVariables.yml
-  jobs:
-  - template: JobTemplates\Deploy.yml
-    parameters:
-      AzureSubscription: 'mon(cb5ab4a7-dd08-4be3-9d7e-9f68ae30f224)'
-      AcrResourceGroup: $(ACRResourceGroup)
-      AksAdClientApplicationName: $(AksAdClientApplicationName)
-      AksAdServerApplicationName: $(AksAdServerApplicationName)
-      AksNodeResourceGroupName: $(AksNodeResourceGroupName)
-      AksServiceName: $(sharedAksCluster)
-      AksServicePrincipalName: $(AksServicePrincipalName)
-      CertificateIssuerAccountId: $(CertificateIssuerAccountId)
-      CertificateIssuerAdministratorPhoneNumber: $(CertificateIssuerAdministratorPhoneNumber)
-      CertificateIssuerPassword: $(CertificateIssuerPassword)
-      envAbbreviation: ${{ variables.envAbbreviation }}
-      Environment: 'LAB_SHARED'
-      EnvironmentTag: ${{ variables.EnvironmentTag }}
-      ResourceGroup: ${{ variables.resourceGroup }}
-      ParentBusinessTag: ${{ variables.ParentBusinessTag }}
-      ServiceOfferingTag: ${{ variables.ServiceOfferingTag }}
-      SharedKeyVaultName: $(sharedKeyVaultName)
-      SharedPrefix: ${{ variables.sharedPrefix }}
-      StorageAccountName: $(sharedDfcStorageAccountName)
+# - stage: DeployTo_LAB
+  # condition: false
+  # variables:
+  # - group: mon-shared-all
+  # - group: mon-shared-infrastructure-all
+  # - template: VariableTemplates\SharedEnvironmentVariables.yml
+  # - group: 'KeyVault - mon-lab-shared-kv'
+  # - group: mon-shared-lab
+  # - group: mon-shared-infrastructure-lab
+  # - group: mon-cds-dev # this mimics the configuration in the classic release definition
+  # - template: VariableTemplates\LabEnvironmentVariables.yml
+  # jobs:
+  # - template: JobTemplates\Deploy.yml
+  #   parameters:
+  #     AzureSubscription: 'mon(cb5ab4a7-dd08-4be3-9d7e-9f68ae30f224)'
+  #     AcrResourceGroup: $(ACRResourceGroup)
+  #     AksAdClientApplicationName: $(AksAdClientApplicationName)
+  #     AksAdServerApplicationName: $(AksAdServerApplicationName)
+  #     AksNodeResourceGroupName: $(AksNodeResourceGroupName)
+  #     AksServiceName: $(sharedAksCluster)
+  #     AksServicePrincipalName: $(AksServicePrincipalName)
+  #     CertificateIssuerAccountId: $(CertificateIssuerAccountId)
+  #     CertificateIssuerAdministratorPhoneNumber: $(CertificateIssuerAdministratorPhoneNumber)
+  #     CertificateIssuerPassword: $(CertificateIssuerPassword)
+  #     envAbbreviation: ${{ variables.envAbbreviation }}
+  #     Environment: 'LAB_SHARED'
+  #     EnvironmentTag: ${{ variables.EnvironmentTag }}
+  #     ResourceGroup: ${{ variables.resourceGroup }}
+  #     ParentBusinessTag: ${{ variables.ParentBusinessTag }}
+  #     ServiceOfferingTag: ${{ variables.ServiceOfferingTag }}
+  #     SharedKeyVaultName: $(sharedKeyVaultName)
+  #     SharedPrefix: ${{ variables.sharedPrefix }}
+  #     StorageAccountName: $(sharedDfcStorageAccountName)
