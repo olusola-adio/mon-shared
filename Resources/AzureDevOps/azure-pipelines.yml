@@ -1,0 +1,181 @@
+# mon-shared pipeline
+# contains release stages that have a condition set to false (so they never run)
+# these can be enabled again when YAML releases are production ready 
+
+variables:
+- name: SolutionBaseName
+  value: Dfc.Shared
+
+resources:
+  repositories:
+  - repository: self
+  - repository: mon-devops
+    type: github
+    name: olusola-adio/mon-devops
+    endpoint: 'olusola-adio'
+    ref: refs/tags/v1.11.1
+
+pr:
+  branches:
+    include:
+    - master
+
+pool:
+  vmImage: windows-latest
+
+stages:
+- stage: Build
+  jobs:
+  - job: TestAndPublish
+    variables:
+      - group: 'KeyVault - mon-dev-shared-kv'
+      - group: mon-shared-infrastructure-dev
+    steps:
+    # ARM template
+    #- script: md Templates
+    - template: AzureDevOpsTemplates/Build/StepTemplates/mon-arm-build.yml@mon-devops
+      parameters:
+        ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Resources'
+        SolutionBaseName: $(SolutionBaseName)
+        TokenizeTestParameters: true
+    - task: CopyFiles@2
+      displayName: 'Copy PSScripts Files to: $(Build.ArtifactStagingDirectory)'
+      inputs:
+        Contents: 'PSScripts/**/*.ps1'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/Resources/PSScripts'
+        flattenFolders: true
+    - task: PublishPipelineArtifact@0
+      displayName: Publish PSScripts Pipeline Artifact
+      inputs:
+        targetPath: $(Build.ArtifactStagingDirectory)/Resources/PSScripts
+        artifactName: Dfc.Shared.Resources.PSScripts
+    # - task: CopyFiles@2
+    #   displayName: 'Copy Tempklate Files to: $(Build.ArtifactStagingDirectory)'
+    #   inputs:
+    #     Contents: 'Resources/*.json'
+    #     TargetFolder: '$(Build.ArtifactStagingDirectory)/Templates'
+    #     flattenFolders: true
+    # - task: PublishPipelineArtifact@0
+    #   displayName: Publish ArmTemplates Pipeline Artifact
+    #   inputs:
+    #     targetPath: $(Build.ArtifactStagingDirectory)/Templates
+    #     artifactName: Dfc.Shared.Resources.Templates
+    - task: PublishPipelineArtifact@0
+      displayName: Publish AksManifests Pipeline Artifact
+      inputs:
+        targetPath: Resources/AksManifests
+        artifactName: Dfc.Shared.Resources.AksManifests
+    - task: ArchiveFiles@2
+      displayName: 'Archive FunctionApp'
+      inputs:
+        rootFolderOrFile: FunctionApp
+        includeRootFolder: false
+        archiveFile: '$(System.DefaultWorkingDirectory)/zip/FunctionApp.zip'
+    - task: PublishPipelineArtifact@0
+      displayName: Publish FunctionApp Pipeline Artifact
+      inputs:
+        artifactName: 'zip'
+        targetPath: '$(System.DefaultWorkingDirectory)/zip'
+
+- stage: DeployTo_DEV
+  condition: false
+  variables:
+  - group: mon-shared-all
+  - group: mon-shared-infrastructure-all
+  - template: VariableTemplates\SharedEnvironmentVariables.yml
+  - group: 'KeyVault - mon-dev-shared-kv'
+  - group: mon-shared-dev
+  - group: mon-aks-all
+  - group: mon-shared-infrastructure-dev
+  - group: mon-cds-dev
+  - template: VariableTemplates\DevEnvironmentVariables.yml
+  jobs:
+  - template: JobTemplates\Deploy.yml
+    parameters:
+      AzureSubscription: 'mon(cb5ab4a7-dd08-4be3-9d7e-9f68ae30f224)'
+      AcrResourceGroup: $(ACRResourceGroup)
+      AksAdClientApplicationName: $(AksAdClientApplicationName)
+      AksAdServerApplicationName: $(AksAdServerApplicationName)
+      AksNodeResourceGroupName: $(AksNodeResourceGroupName)
+      AksServiceName: $(sharedAksCluster)
+      AksServicePrincipalName: $(AksServicePrincipalName)
+      CertificateIssuerAccountId: $(CertificateIssuerAccountId)
+      CertificateIssuerAdministratorPhoneNumber: $(CertificateIssuerAdministratorPhoneNumber)
+      CertificateIssuerPassword: $(CertificateIssuerPassword)
+      envAbbreviation: ${{ variables.envAbbreviation }}
+      Environment: 'DEV_SHARED'
+      EnvironmentTag: ${{ variables.EnvironmentTag }}
+      ResourceGroup: ${{ variables.resourceGroup }}
+      ParentBusinessTag: ${{ variables.ParentBusinessTag }}
+      ServiceOfferingTag: ${{ variables.ServiceOfferingTag }}
+      SharedKeyVaultName: $(sharedKeyVaultName)
+      SharedPrefix: ${{ variables.sharedPrefix }}
+      StorageAccountName: $(sharedDfcStorageAccountName)
+
+- stage: DeployTo_SIT
+  condition: false
+  variables:
+  - group: mon-shared-all
+  - group: mon-shared-infrastructure-all
+  - template: VariableTemplates\SharedEnvironmentVariables.yml
+  - group: 'KeyVault - mon-sit-shared-kv'
+  - group: mon-shared-sit
+  - group: mon-shared-infrastructure-sit
+  - group: mon-cds-sit
+  - template: VariableTemplates\SitEnvironmentVariables.yml
+  jobs:
+  - template: JobTemplates\Deploy.yml
+    parameters:
+      AzureSubscription: 'mon(cb5ab4a7-dd08-4be3-9d7e-9f68ae30f224)'
+      AcrResourceGroup: $(ACRResourceGroup)
+      AksAdClientApplicationName: $(AksAdClientApplicationName)
+      AksAdServerApplicationName: $(AksAdServerApplicationName)
+      AksNodeResourceGroupName: $(AksNodeResourceGroupName)
+      AksServiceName: $(sharedAksCluster)
+      AksServicePrincipalName: $(AksServicePrincipalName)
+      CertificateIssuerAccountId: $(CertificateIssuerAccountId)
+      CertificateIssuerAdministratorPhoneNumber: $(CertificateIssuerAdministratorPhoneNumber)
+      CertificateIssuerPassword: $(CertificateIssuerPassword)
+      envAbbreviation: ${{ variables.envAbbreviation }}
+      Environment: 'SIT_SHARED'
+      EnvironmentTag: ${{ variables.EnvironmentTag }}
+      ResourceGroup: ${{ variables.resourceGroup }}
+      ParentBusinessTag: ${{ variables.ParentBusinessTag }}
+      ServiceOfferingTag: ${{ variables.ServiceOfferingTag }}
+      SharedKeyVaultName: $(sharedKeyVaultName)
+      SharedPrefix: ${{ variables.sharedPrefix }}
+      StorageAccountName: $(sharedDfcStorageAccountName)
+
+- stage: DeployTo_LAB
+  condition: false
+  variables:
+  - group: mon-shared-all
+  - group: mon-shared-infrastructure-all
+  - template: VariableTemplates\SharedEnvironmentVariables.yml
+  - group: 'KeyVault - mon-lab-shared-kv'
+  - group: mon-shared-lab
+  - group: mon-shared-infrastructure-lab
+  - group: mon-cds-dev # this mimics the configuration in the classic release definition
+  - template: VariableTemplates\LabEnvironmentVariables.yml
+  jobs:
+  - template: JobTemplates\Deploy.yml
+    parameters:
+      AzureSubscription: 'mon(cb5ab4a7-dd08-4be3-9d7e-9f68ae30f224)'
+      AcrResourceGroup: $(ACRResourceGroup)
+      AksAdClientApplicationName: $(AksAdClientApplicationName)
+      AksAdServerApplicationName: $(AksAdServerApplicationName)
+      AksNodeResourceGroupName: $(AksNodeResourceGroupName)
+      AksServiceName: $(sharedAksCluster)
+      AksServicePrincipalName: $(AksServicePrincipalName)
+      CertificateIssuerAccountId: $(CertificateIssuerAccountId)
+      CertificateIssuerAdministratorPhoneNumber: $(CertificateIssuerAdministratorPhoneNumber)
+      CertificateIssuerPassword: $(CertificateIssuerPassword)
+      envAbbreviation: ${{ variables.envAbbreviation }}
+      Environment: 'LAB_SHARED'
+      EnvironmentTag: ${{ variables.EnvironmentTag }}
+      ResourceGroup: ${{ variables.resourceGroup }}
+      ParentBusinessTag: ${{ variables.ParentBusinessTag }}
+      ServiceOfferingTag: ${{ variables.ServiceOfferingTag }}
+      SharedKeyVaultName: $(sharedKeyVaultName)
+      SharedPrefix: ${{ variables.sharedPrefix }}
+      StorageAccountName: $(sharedDfcStorageAccountName)

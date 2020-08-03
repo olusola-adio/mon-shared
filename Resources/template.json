@@ -1,0 +1,1084 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sharedPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix for all resources created for the project (except storage account, see below). Should be in thee format mon-env-proj"
+      }
+    },
+    "aksAgentVmSize": {
+      "type": "string"
+    },
+    "aksAgentNodeCount": {
+      "type": "int"
+    },
+    "aksDnsServiceIp": {
+      "type": "string"
+    },
+    "aksKubernetesVersion": {
+      "type": "string"
+    },
+    "aksNodeResourceGroupName": {
+      "type": "string"
+    },
+    "aksRbacClientAppId": {
+      "type": "string"
+    },
+    "aksRbacServerAppId": {
+      "type": "string"
+    },
+    "aksRbacServerAppSecret": {
+      "type": "securestring"
+    },
+    "aksRbacTenantId": {
+      "type": "string"
+    },
+    "aksRouteTableName": {
+      "type": "string"
+    },
+    "aksServiceCidr": {
+      "type": "string"
+    },
+    "aksServicePrincipalClientId": {
+      "type": "string"
+    },
+    "aksServicePrincipalSecret": {
+      "type": "securestring"
+    },
+    "aksSubnetName": {
+      "type": "string"
+    },
+    "aksVirtualNetworkAddressPrefix": {
+      "type": "string"
+    },
+    "aksVnetName": {
+      "type": "string"
+    },
+    "aksVnetCreate": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Bool to determine whether to create a VNet for AKS - defaults to create a VNet"
+      }
+    },
+    "aksVnetResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Only required if the VNet will be externally created (ie PP or PROD).  The resource group that holds the VNet that AKS will be connected to."
+      }
+    },
+    "aksAppGatewaySubnetName": {
+      "type": "string"
+    },
+    "aksAppGatewayNetworkSecurityGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The network security group assigned to the AKS App Gateway subnet"
+      }
+    },
+    "aksInboundIpAddressRange": {
+      "type": "string",
+      "defaultValue": "0.0.0.0/0",
+      "metadata": {
+        "description": "A comma separated list of IP addresses allowed to access the AKS App Gateway"
+      }
+    },
+    "apimExists": {
+      "type": "bool",
+      "metadata": {
+        "description": "Bool to determine whether the Basic APIM deployment is complete"
+      }
+    },
+    "deployApim": {
+      "type": "bool",
+      "metadata": {
+        "description": "Used to control whether APIM is deployed at all as part of the APIM Basic deployment condition"
+      }
+    },
+    "apimHostnameRoot": {
+      "type": "string",
+      "metadata": {
+        "description": "The hostname used by the API (Proxy) and Developer Portal (Portal)"
+      }
+    },
+    "apimPortalKeyVaultCertificatePath": {
+      "type": "string",
+      "metadata": {
+        "description": "The certificate identifier, eg https://dss-dev-shared-kv.vault.azure.net/certificates/wildcard-dss-nationalcareersservice-direct-gov-uk/identifierstringabc123"
+      }
+    },
+    "apimProxyKeyVaultCertificatePath": {
+      "type": "string",
+      "metadata": {
+        "description": "The certificate identifier, eg https://dss-dev-shared-kv.vault.azure.net/certificates/wildcard-dss-nationalcareersservice-direct-gov-uk/identifierstringabc123"
+      }
+    },
+    "apimNetworkSecurityGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The network security group assigned to the APIM subnet.  The rules on this group will be altered by the release so this group should not be shared with other subnets."
+      }
+    },
+    "apimSubnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the subnet the APIM will be connected to."
+      }
+    },
+    "apimSkuTier": {
+      "type": "string",
+      "defaultValue": "Developer"
+    },
+    "apimCapacity": {
+      "type": "int",
+      "defaultValue": 1
+    },
+    "apimVnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the VNet the APIM subnet is part of."
+      }
+    },
+    "apimVNetResourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "The Resource Group of the VNet the APIM subnet is part of."
+      }
+    },
+    "aseDomainName": {
+      "type": "string",
+      "metadata": {
+        "description": "DNS zone used to resolve the addresses for the ASE and child apps"
+      }
+    },
+    "aseNetworkSecurityGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The network security group assigned to the ASEs subnet.  The rules on this group will be altered by the release so this group should not be shared with other subnets."
+      }
+    },
+    "aseSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet the ASE will be connected to."
+      }
+    },
+    "aseVnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name the VNet the ASE subnet is part of."
+      }
+    },
+    "aseVNetResourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "The Resource Group of the VNet the ASE subnet is part of."
+      }
+    },
+    "defaultKeyVaultReadAccess": {
+      "type": "array",
+      "defaultValue": [
+      ]
+    },
+    "defaultKeyVaultWriteAccess": {
+      "type": "array",
+      "defaultValue": [
+      ],
+      "metadata": {
+        "description": "A list of azure service pricipals to assign write access to certificates on the shared key vault"
+      }
+    },
+    "environmentName": {
+      "type": "string",
+      "allowedValues": [
+        "DEV",
+        "SIT",
+        "LAB",
+        "OAT",
+        "PP",
+        "PRD"
+      ]
+    },
+    "envType": {
+      "type": "string",
+      "allowedValues": [
+        "dev",
+        "prod"
+      ],
+      "metadata": {
+        "description": "Type of environment, either dev or prod"
+      }
+    },
+    "sqlServerAdminUserName": {
+      "type": "string",
+      "metadata": {
+        "description": "The Azure SQL Server Administrator (SA) username (will auto-generate one if not passed in)"
+      }
+    },
+    "sqlServerAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The Azure SQL Server Administrator (SA) password"
+      }
+    },
+    "sqlServerActiveDirectoryAdminLogin": {
+      "type": "string",
+      "metadata": {
+        "description": "The active directory admin that will be assigned to the SQL server"
+      }
+    },
+    "sqlServerActiveDirectoryAdminObjectId": {
+      "type": "string",
+      "metadata": {
+        "description": "The object id of the active directory admin that will be assigned to the SQL server"
+      }
+    },
+    "threatDetectionEmailAddress": {
+      "type": "array",
+      "metadata": {
+        "description": "The email address that threat alerts will be sent to"
+      }
+    },
+    "virtualNetworkAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0",
+      "metadata": {
+        "description": "First 2 octects of VNet Private IP address range (VNet prefix)"
+      }
+    },
+    "virtualNetworkRoutedSubnets": {
+      "type": "array",
+      "metadata": {
+        "description": "Array of subnets to create"
+      }
+    },
+    "virtualNetworkNonRoutedSubnets": {
+      "type": "array",
+      "metadata": {
+        "description": "Array of subnets to create"
+      }
+    },
+    "vnetResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the resource group vNets are deployed"
+      }
+    },
+    "appGatewayNetworkSecurityGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The network security group assigned to the ASEs subnet.  The rules on this group will be altered by the release so this group should not be shared with other subnets."
+      }
+    },
+    "appGatewayVnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name the VNet the ASE subnet is part of. Only needed if envType is Prod."
+      }
+    },
+    "appGatewaySubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet gateway name"
+      }
+    },
+    "appGatewayCloudServiceIpAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "Used for App Gateway NSG to allow outbound traffic to given Cloud Service Ip Address"
+      }
+    },
+    "appGatewayIncomingIpAddressRange": {
+      "type": "string",
+      "defaultValue": "0.0.0.0/1,128.0.0.0/2,192.0.0.0/3,224.0.0.0/4",
+      "metadata": {
+        "description": "Restricts HTTP(S) traffic to App Gateway to the passed in range"
+      }
+    }
+  },
+  "variables": {
+    "monDevOpsTemplatesUrl": "https://raw.githubusercontent.com/olusola-adio/mon-devops/master/ArmTemplates/",
+    "localTemplatesUrl": "https://raw.githubusercontent.com/olusola-adio/mon-shared/master/Resources/",
+    "keyVaultName": "[concat(parameters('sharedPrefix'),'-kv')]",
+    "storageAccountName": "[concat(replace(parameters('sharedPrefix'),'-',''),'str')]",
+    "apimAdminEmail": "olusola.adio@nimbusdti.co.uk",
+    "apimName": "[concat(parameters('sharedPrefix'),'-apim')]",
+    "apimOrganizationName": "Logion Limited",
+    "functionAppName": "[concat(parameters('sharedPrefix'),'-fa')]",
+    "functionAppInsightName": "[concat(parameters('sharedPrefix'),'-ai')]",
+    "appServicePlanName": "[concat(parameters('sharedPrefix'),'-asp')]",
+    "sharedResourceGroup": "[concat(parameters('sharedPrefix'),'-rg')]",
+    "sqlServerName": "[concat(parameters('sharedPrefix'),'-sql')]",
+    "elasticPoolName": "[if(equals(parameters('envType'),'dev'), concat(parameters('sharedPrefix'),'-epl'), '')]",
+    "appServiceEnvName": "[concat(parameters('sharedPrefix'),'-ase')]",
+    "cdnName": "[concat(parameters('sharedPrefix'),'-cdn')]",
+    "deployAse": "[not(equals(parameters('aseDomainName'), ''))]",
+    "defaultKeyVaultReadAccessHack": "[if(empty(parameters('defaultKeyVaultReadAccess')), 1, length(parameters('defaultKeyVaultReadAccess')))]",
+    "defaultKeyVaultWriteAccessHack": "[if(empty(parameters('defaultKeyVaultWriteAccess')), 1, length(parameters('defaultKeyVaultWriteAccess')))]",
+    "containerRegistryName": "[toLower(concat(replace(parameters('sharedPrefix'),'-',''),'cr'))]",
+    "aksClusterName": "[concat(parameters('sharedPrefix'), '-aks')]",
+    "aksNodeResourceGroupName": "[concat(variables('aksClusterName'), 'nodes-rg')]"
+    //"functionAppId": "[resourceId(variables('sharedResourceGroup'),'Microsoft.Web/sites/', variables('functionAppName'))]",
+  },
+  "resources": [
+    {
+      "name": "containerRegistry",
+      "type": "Microsoft.Resources/deployments",
+      "condition": "[or(equals(parameters('environmentName'), 'DEV'), equals(parameters('environmentName'), 'PRD'))]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('monDevOpsTemplatesUrl'), 'container-registry.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "containerRegistryName": {
+            "value": "[variables('containerRegistryName')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2019-04-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2"
+    },
+
+    // {
+    //   "name": "sharedStorage",
+    //   "type": "Microsoft.Resources/deployments",
+    //   "apiVersion": "2017-05-10",
+    //   "properties": {
+    //     "mode": "Incremental",
+    //     "templateLink": {
+    //       "uri": "[concat(variables('monDevOpsTemplatesUrl'),'storage-account.json')]",
+    //       "contentVersion": "1.0.0.0"
+    //     },
+    //     "parameters": {
+    //       "storageAccountName": {
+    //         "value": "[variables('storageAccountName')]"
+    //       }
+    //     }
+    //   }
+    // },
+    {
+      "name": "sharedAzureKubernetesServiceNetwork",
+      "type": "Microsoft.Resources/deployments",
+      "condition": "[parameters('aksVnetCreate')]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('localTemplatesUrl'), 'networks/aks-vnet.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "aksNodeResourceGroupName": {
+            "value": "[parameters('aksNodeResourceGroupName')]"
+          },
+          "aksRouteTableName": {
+            "value": "[parameters('aksRouteTableName')]"
+          },
+          "aksSubnetName": {
+            "value": "[parameters('aksSubnetName')]"
+          },
+          "aksAppGatewaySubnetName": {
+            "value": "[parameters('aksAppGatewaySubnetName')]"
+          },
+          "virtualNetworkAddressPrefix": {
+            "value": "[parameters('aksVirtualNetworkAddressPrefix')]"
+          },
+          "vnetName": {
+            "value": "[parameters('aksVnetName')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "sharedAzureKubernetesService",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('monDevOpsTemplatesUrl'),'aks.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "clusterName": {
+            "value": "[variables('aksClusterName')]"
+          },
+          "agentVMSize": {
+            "value": "[parameters('aksAgentVmSize')]"
+          },
+          "agentNodeCount": {
+            "value": "[parameters('aksAgentNodeCount')]"
+          },
+          "dnsServiceIp": {
+            "value": "[parameters('aksDnsServiceIp')]"
+          },
+          "kubernetesVersion": {
+            "value": "[parameters('aksKubernetesVersion')]"
+          },
+          "nodeResourceGroup": {
+            "value": "[variables('aksNodeResourceGroupName')]"
+          },
+          "rbacClientAppId": {
+            "value": "[parameters('aksRbacClientAppId')]"
+          },
+          "rbacServerAppId": {
+            "value": "[parameters('aksRbacServerAppId')]"
+          },
+          "rbacServerAppSecret": {
+            "value": "[parameters('aksRbacServerAppSecret')]"
+          },
+          "rbacTenantId": {
+            "value": "[parameters('aksRbacTenantId')]"
+          },
+          "serviceCidr": {
+            "value": "[parameters('aksServiceCidr')]"
+          },
+          "servicePrincipalClientId": {
+            "value": "[parameters('aksServicePrincipalClientId')]"
+          },
+          "servicePrincipalSecret": {
+            "value": "[parameters('aksServicePrincipalSecret')]"
+          },
+          "subnetName": {
+            "value": "[parameters('aksSubnetName')]"
+          },
+          "virtualNetworkName": {
+            "value": "[parameters('aksVnetName')]"
+          },
+          "virtualNetworkResourceGroup": {
+            "value": "[if(parameters('aksVnetCreate'), resourceGroup().name, parameters('aksVnetResourceGroupName'))]"
+          }
+        }
+      },
+      "dependsOn": [
+        "sharedAzureKubernetesServiceNetwork"
+      ]
+    },
+    {
+      "name": "sharedManagedInstanceEnvironment",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "condition": "[equals(parameters('envType'),'dev')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('monDevOpsTemplatesUrl'),'network.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "virtualNetworkPrefix": {
+            "value": "[parameters('sharedPrefix')]"
+          },
+          "virtualNetworkAddressPrefix": {
+            "value": "[parameters('virtualNetworkAddressPrefix')]"
+          },
+          "virtualNetworkRoutedSubnets": {
+            "value": "[parameters('virtualNetworkRoutedSubnets')]"
+          },
+          "virtualNetworkNonRoutedSubnets": {
+            "value": "[parameters('virtualNetworkNonRoutedSubnets')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "sharedKeyVault",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('monDevOpsTemplatesUrl'),'keyvault.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[variables('keyVaultName')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "[concat('sharedKeyVaultDefaultReadAccessPolicy-', copyIndex())]",
+      "type": "Microsoft.Resources/deployments",
+      "condition": "[greater(length(parameters('defaultKeyVaultReadAccess')), 0)]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('monDevOpsTemplatesUrl'),'/KeyVault/keyvault-access-policy.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[variables('keyVaultName')]"
+          },
+          "servicePrincipalObjectId": {
+            "value": "[parameters('defaultKeyVaultReadAccess')[copyIndex()]]"
+          },
+          "secretPermissions": {
+            "value": [
+              "get",
+              "list"
+            ]
+          },
+          "certificatePermissions": {
+            "value": [
+              "get",
+              "list",
+              "getissuers",
+              "listissuers"
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "sharedKeyVault"
+      ],
+      "metadata": {
+        "description": "The count parameter in the copy block is populated with either the length of the defaultKeyVaultReadAccess parameter, or 1 if it's empty  and is to work around copyIndex erroring when it's 0, even if it's in a conditional block."
+      },
+      "copy": {
+        "name": "keyvaultReadAccessCopy",
+        "count": "[variables('defaultKeyVaultReadAccessHack')]",
+        "mode": "Serial",
+        "batchSize": 1
+      }
+    },
+    {
+      "name": "[concat('sharedKeyVaultDefaultWriteAccessPolicy-', copyIndex())]",
+      "type": "Microsoft.Resources/deployments",
+      "condition": "[greater(length(parameters('defaultKeyVaultWriteAccess')), 0)]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('monDevOpsTemplatesUrl'),'/KeyVault/keyvault-access-policy.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[variables('keyVaultName')]"
+          },
+          "servicePrincipalObjectId": {
+            "value": "[parameters('defaultKeyVaultWriteAccess')[copyIndex()]]"
+          },
+          "secretPermissions": {
+            "value": [
+              "set",
+              "delete",
+              "purge"
+            ]
+          },
+          "certificatePermissions": {
+            "value": [
+              "create",
+              "update",
+              "setissuers"
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "sharedKeyVault",
+        "keyvaultReadAccessCopy"
+      ],
+      "metadata": {
+        "description": "The count parameter in copy block is populated with either the length of the certificateWriteAccess parameter, or 1 if it's empty  and is to work around copyIndex erroring when it's 0, even if it's in a conditional block."
+      },
+      "copy": {
+        "name": "defaultKeyVaultWriteAccessCopy",
+        "count": "[variables('defaultKeyVaultWriteAccessHack')]",
+        "mode": "Serial",
+        "batchSize": 1
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2018-02-01",
+      "name": "[variables('appServicePlanName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+          "name": "Y1",
+          "tier": "Dynamic"
+      },
+      "properties": {
+          "name": "[variables('appServicePlanName')]",
+          "computeMode": "Dynamic"
+      }
+    },
+// {
+//   "apiVersion": "2017-05-10",
+//   "name": "[variables('appServicePlanName')]",
+//   "type": "Microsoft.Resources/deployments",
+//   "properties": {
+//     "mode": "Incremental",
+//     "templateLink": {
+//       "uri": "[concat(variables('monDevOpsTemplatesUrl'), 'app-service-plan.json')]",
+//       "contentVersion": "1.0.0.0"
+//     },
+//     "parameters": {
+//       "appServicePlanName": {
+//         "value": "[variables('appServicePlanName')]"
+//       },
+//       "aspSize": {
+//         "value": "1"
+//       },
+//       "aspInstances": {
+//         "value": 1
+//       },
+//       "nonASETier": {
+//         "value": "Standard"
+//       }
+//     }
+//   }
+// },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "[variables('functionAppInsightName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('monDevOpsTemplatesUrl'), 'application-insights.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appInsightsName": {
+            "value": "[variables('functionAppInsightName')]"
+          },
+          "attachedService": {
+            "value": ""
+          }
+        }
+      }
+    },
+    // {
+    //   "apiVersion": "2017-05-10",
+    //   "name": "[variables('functionAppName')]",
+    //   "type": "Microsoft.Resources/deployments",
+    //   "properties": {
+    //     "mode": "Incremental",
+    //     "templateLink": {
+    //       "uri": "[concat(variables('monDevOpsTemplatesUrl'), 'app-service.json')]",
+    //       "contentVersion": "1.0.0.0"
+    //     },
+    //     "parameters": {
+    //       "appServiceName": {
+    //         "value": "[variables('functionAppName')]"
+    //       },
+    //       "appServicePlanName": {
+    //         "value": "[variables('appServicePlanName')]"
+    //       },
+    //       "appServicePlanResourceGroup": {
+    //         "value": "[variables('sharedResourceGroup')]"
+    //       },
+    //       "appServiceType": {
+    //         "value": "functionapp"
+    //       },
+    //       "deployStagingSlot": {
+    //         "value": true
+    //       },
+    //       "clientAffinity": {
+    //         "value": true
+    //       },
+    //       "appServiceAppSettings": {
+    //         "value": [
+    //           {
+    //             "name": "FUNCTIONS_EXTENSION_VERSION",
+    //             "value": "~3"
+    //           },
+    //           {
+    //             "name": "FUNCTIONS_WORKER_RUNTIME",
+    //             "value": "powershell"
+    //           },
+    //           {
+    //             "name": "MSDEPLOY_RENAME_LOCKED_FILES",
+    //             "value": "1"
+    //           },
+    //           {
+    //             "name": "AzureWebJobsStorage",
+    //             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId(variables('sharedResourceGroup'), 'Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+    //           },
+    //           {
+    //             "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+    //             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId(variables('sharedResourceGroup'), 'Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+    //           },
+    //           {
+    //             "name": "WEBSITE_CONTENTSHARE",
+    //             "value": "[variables('functionAppName')]"
+    //           },
+    //           {
+    //             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+    //             "value": "[reference(variables('functionAppInsightName')).outputs.InstrumentationKey.value]"
+    //           }
+    //         ]
+    //       }
+    //     }
+    //   },
+    //   "dependsOn": [
+    //     "[variables('functionAppInsightName')]",
+    //      "sharedStorage"
+    //   ]
+    // },
+    {
+      "apiVersion": "2015-08-01",
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('functionAppName')]",
+      "location": "[resourceGroup().location]",
+      "kind": "functionapp",
+      "dependsOn": [
+          "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+          "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+          "[variables('functionAppInsightName')]"
+      ],
+      "properties": {
+          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+          "siteConfig": {
+              "appSettings": [
+                  {
+                      "name": "AzureWebJobsDashboard",
+                      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountName'),'2015-05-01-preview').key1)]"
+                  },
+                  {
+                      "name": "AzureWebJobsStorage",
+                      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountName'),'2015-05-01-preview').key1)]"
+                  },
+                  {
+                      "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountName'),'2015-05-01-preview').key1)]"
+                  },
+                  {
+                      "name": "WEBSITE_CONTENTSHARE",
+                      "value": "[toLower(variables('functionAppName'))]"
+                  },
+                  {
+                      "name": "FUNCTIONS_EXTENSION_VERSION",
+                      "value": "~3"
+                  },
+                  {
+                      "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                      "value": "8.11.1"
+                  },
+                  {
+                      "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                      "value": "[reference(variables('functionAppInsightName')).outputs.InstrumentationKey.value]"
+                  },
+                  {
+                      "name": "FUNCTIONS_WORKER_RUNTIME",
+                      "value": "powershell"
+                  }
+              ]
+          }
+      }
+    },
+    {
+      "name": "sharedApimKeyVaultAccessPolicy",
+      "type": "Microsoft.Resources/deployments",
+      "condition": "[parameters('deployApim')]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('monDevOpsTemplatesUrl'),'/KeyVault/keyvault-access-policy.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[variables('keyVaultName')]"
+          },
+          "servicePrincipalObjectId": {
+            "value": "[if(parameters('deployApim'), if(parameters('apimExists'), reference(concat('Microsoft.ApiManagement/service/', variables('apimName')), '2018-01-01', 'Full').identity.principalId, reference('sharedApimServiceBasic', '2017-05-10').outputs.ApimServiceIdentityPrincipalId.value), '')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "sharedApimServiceBasic",
+        "sharedKeyVault",
+        "defaultKeyVaultWriteAccessCopy"
+      ]
+    },
+    {
+      "name": "apimNetworkSecurityGroup",
+      "type": "Microsoft.Resources/deployments",
+      "condition": "[variables('deployAse')]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('localTemplatesUrl'), 'network-security-groups/apim-nsg.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "name": {
+            "value": "[parameters('apimNetworkSecurityGroup')]"
+          },
+          "aseSubnetName": {
+            "value": "[parameters('aseSubnetName')]"
+          },
+          "aseVnetName": {
+            "value": "[parameters('aseVnetName')]"
+          },
+          "aseVNetResourceGroupName": {
+            "value": "[parameters('aseVNetResourceGroupName')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "sharedApimServiceBasic",
+      "type": "Microsoft.Resources/deployments",
+      "condition": "[and(not(parameters('apimExists')),parameters('deployApim'))]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('monDevOpsTemplatesUrl'),'apim-service.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "adminEmail": {
+            "value": "[variables('apimAdminEmail')]"
+          },
+          "apimServiceName": {
+            "value": "[variables('apimName')]"
+          },
+          "organizationName": {
+            "value": "[variables('apimOrganizationName')]"
+          },
+          "skuTier": {
+            "value": "[parameters('apimSkuTier')]"
+          },
+          "capacity": {
+            "value": "[parameters('apimCapacity')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "sharedApimServiceFull",
+      "type": "Microsoft.Resources/deployments",
+      "condition": "[parameters('deployApim')]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('monDevOpsTemplatesUrl'),'apim-service.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "adminEmail": {
+            "value": "[variables('apimAdminEmail')]"
+          },
+          "apimServiceName": {
+            "value": "[variables('apimName')]"
+          },
+          "environmentName": {
+            "value": "[parameters('environmentName')]"
+          },
+          "hostnameRoot": {
+            "value": "[parameters('apimHostnameRoot')]"
+          },
+          "organizationName": {
+            "value": "[variables('apimOrganizationName')]"
+          },
+          "portalKeyVaultCertificatePath": {
+            "value": "[parameters('apimPortalKeyVaultCertificatePath')]"
+          },
+          "proxyKeyVaultCertificatePath": {
+            "value": "[parameters('apimProxyKeyVaultCertificatePath')]"
+          },
+          "skuTier": {
+            "value": "[parameters('apimSkuTier')]"
+          },
+          "capacity": {
+            "value": "[parameters('apimCapacity')]"
+          },
+          "subnetName": {
+            "value": "[parameters('apimSubnetName')]"
+          },
+          "vnetResourceGroup": {
+            "value": "[parameters('apimVNetResourceGroupName')]"
+          },
+          "vnetName": {
+            "value": "[parameters('apimVnetName')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "sharedApimServiceBasic",
+        "sharedApimKeyVaultAccessPolicy"
+      ]
+    },
+    {
+      "name": "aseNetworkSecurityGroup",
+      "type": "Microsoft.Resources/deployments",
+      "condition": "[variables('deployAse')]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('localTemplatesUrl'), 'network-security-groups/ase-nsg.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "name": {
+            "value": "[parameters('aseNetworkSecurityGroup')]"
+          },
+          "aseSubnetName": {
+            "value": "[parameters('aseSubnetName')]"
+          },
+          "aseVnetName": {
+            "value": "[parameters('aseVnetName')]"
+          },
+          "aseVNetResourceGroupName": {
+            "value": "[parameters('aseVNetResourceGroupName')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "appGatewayNetworkSecurityGroup",
+      "condition": "[not(equals(parameters('environmentName'), 'OAT'))]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "dependsOn": [
+        "sharedManagedInstanceEnvironment"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('localTemplatesUrl'), 'network-security-groups/ag-nsg.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "name": {
+            "value": "[parameters('appGatewayNetworkSecurityGroup')]"
+          },
+          "agSubnetName": {
+            "value": "[parameters('appGatewaySubnetName')]"
+          },
+          "vnetName": {
+            "value": "[if(equals(parameters('envType'),'dev'), reference('sharedManagedInstanceEnvironment','2017-05-10').outputs.virtualNetworkName.value, parameters('appGatewayVnetName'))]"
+          },
+          "vnetResourceGroupName": {
+            "value": "[parameters('vnetResourceGroup')]"
+          },
+          "privateIpAddressRange": {
+            "value": "[parameters('appGatewayIncomingIpAddressRange')]"
+          },
+          "cloudServiceIpAddress": {
+            "value": "[parameters('appGatewayCloudServiceIpAddress')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "aksAppGatewayNetworkSecurityGroup",
+      "condition": "[equals(parameters('envType'),'dev')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "dependsOn": [
+        "sharedManagedInstanceEnvironment"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('localTemplatesUrl'), 'network-security-groups/aksag-nsg.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "name": {
+            "value": "[parameters('aksAppGatewayNetworkSecurityGroup')]"
+          },
+          "agSubnetName": {
+            "value": "[parameters('aksAppGatewaySubnetName')]"
+          },
+          "vnetName": {
+            "value": "[parameters('aksVnetName')]"
+          },
+          "vnetResourceGroupName": {
+            "value": "[if(equals(parameters('envType'),'dev'), resourceGroup().name, parameters('aksVnetResourceGroupName'))]"
+          },
+          "inboundIpAddressRange": {
+            "value": "[parameters('aksInboundIpAddressRange')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "sharedAppServiceEnvironment",
+      "type": "Microsoft.Resources/deployments",
+      "condition": "[variables('deployAse')]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('monDevOpsTemplatesUrl'), 'app-service-envionment.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "name": {
+            "value": "[variables('appServiceEnvName')]"
+          },
+          "domainName": {
+            "value": "[parameters('aseDomainName')]"
+          },
+          "networkSecurityGroupAssigned": {
+            "value": "[if(variables('deployAse'), equals(parameters('aseNetworkSecurityGroup'), split(reference(resourceId(parameters('aseVNetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('aseVnetName'), parameters('aseSubnetName')), '2018-07-01', 'Full').properties.networkSecurityGroup.id, '/')[8]), bool('false'))]"
+          },
+          "subnetName": {
+            "value": "[parameters('aseSubnetName')]"
+          },
+          "virtualnetworkResourceGroupName": {
+            "value": "[parameters('aseVNetResourceGroupName')]"
+          },
+          "virtualNetworkName": {
+            "value": "[parameters('aseVnetName')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "aseNetworkSecurityGroup"
+      ]
+    }
+  ],
+  "outputs": {
+    "keyVaultName": {
+      "type": "string",
+      "value": "[variables('keyVaultName')]"
+    },
+    "KeyVaultUri": {
+      "type": "string",
+      "value": "[reference('sharedKeyVault','2017-05-10').outputs.KeyVaultUri.value]"
+    },
+    "storageAccountName": {
+      "type": "string",
+      "value": "[variables('storageAccountName')]"
+    },
+    "cdnName": {
+      "type": "string",
+      "value": "[variables('cdnName')]"
+    },
+    "apimName": {
+      "type": "string",
+      "value": "[variables('apimName')]"
+    }
+  }
+}

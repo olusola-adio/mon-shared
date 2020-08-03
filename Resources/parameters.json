@@ -1,0 +1,165 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sharedPrefix": {
+      "value": "__sharedPrefix__"
+    },
+    "apimExists": {
+      "value": __apimExists__
+    },
+    "deployApim": {
+      "value": false
+    },
+    "aksAgentVmSize": {
+      "value": "__AksAgentVmSize__"
+    },
+    "aksAgentNodeCount": {
+      "value": __AksAgentNodeCount__
+    },
+    "aksDnsServiceIp": {
+      "value": "__AksDnsServiceIp__"
+    },
+    "aksKubernetesVersion": {
+      "value": "__AksKubernetesVersion__"
+    },
+    "aksNodeResourceGroupName": {
+      "value": "__AksNodeResourceGroupName__"
+    },
+    "aksRbacClientAppId": {
+      "value": "__AksRbacClientAppId__"
+    },
+    "aksRbacServerAppId": {
+      "value": "__AksRbacServerAppId__"
+    },
+    "aksRbacServerAppSecret": {
+      "value": "__AksRbacServerAppSecret__"
+    },
+    "aksRbacTenantId": {
+      "value": "__AksRbacTenantId__"
+    },
+    "aksRouteTableName": {
+      "value": "__AksRouteTableName__"
+    },
+    "aksServiceCidr": {
+      "value": "__AksServiceCidr__"
+    },
+    "aksServicePrincipalClientId": {
+      "value": "__AksServicePrincipalClientId__"
+    },
+    "aksServicePrincipalSecret": {
+      "value": "__AksServicePrincipalSecret__"
+    },
+    "aksSubnetName": {
+      "value": "__AksSubnetName__"
+    },
+    "aksVirtualNetworkAddressPrefix": {
+      "value": "__AksVirtualNetworkAddressPrefix__"
+    },
+    "aksVnetName": {
+      "value": "__AksVnetName__"
+    },
+    "aksVnetResourceGroupName": {
+      "value": "__AksVnetResourceGroupName__"
+    },
+    "aksAppGatewaySubnetName": {
+      "value": "__aksAppGatewaySubnetName__"
+    },
+    "aksAppGatewayNetworkSecurityGroup": {
+      "value": "__aksAppGatewayNetworkSecurityGroup__"
+    },
+    "apimHostnameRoot": {
+      "value": "__apimHostnameRoot__"
+    },
+    "apimPortalKeyVaultCertificatePath": {
+      "value": "__portalApiKeyVaultCertificatePath__"
+    },
+    "apimProxyKeyVaultCertificatePath": {
+      "value": "__proxyApiKeyVaultCertificatePath__"
+    },
+    "apimNetworkSecurityGroup": {
+      "value": "__apimNetworkSecurityGroup__"
+    },
+    "apimSubnetName": {
+      "value": "__apimSubnetName__"
+    },
+    "apimSkuTier": {
+      "value": "__apimSkuTier__"
+    },
+    "apimCapacity": {
+      "value": __apimCapacity__
+    },
+    "apimVnetName": {
+      "value": "__apimVnetName__"
+    },
+    "apimVNetResourceGroupName": {
+      "value": "__apimVNetResourceGroupName__"
+    },
+    "aseDomainName": {
+      "value": "__aseDomainName__"
+    },
+    "aseNetworkSecurityGroup": {
+      "value": "__aseNetworkSecurityGroup__"
+    },
+    "aseSubnetName": {
+      "value": "__aseSubnetName__"
+    },
+    "aseVnetName": {
+      "value": "__aseVnetName__"
+    },
+    "aseVNetResourceGroupName": {
+      "value": "__aseVNetResourceGroupName__"
+    },
+    "defaultKeyVaultReadAccess": {
+      "value": __defaultKeyVaultReadAccess__
+    },
+    "defaultKeyVaultWriteAccess": {
+      "value": __certificateKeyVaultWriteAccess__
+    },
+    "environmentName": {
+      "value": "__ReleaseEnvironmentName__"
+    },
+    "envType": {
+      "value": "__envType__"
+    },
+    "sqlServerAdminPassword": {
+      "value": "__sqlAdminPassword__"
+    },
+    "sqlServerAdminUserName": {
+      "value": "__sqlAdminLogin__"
+    },
+    "sqlServerActiveDirectoryAdminLogin": {
+      "value": "__sqlAdGroupName__"
+    },
+    "sqlServerActiveDirectoryAdminObjectId": {
+      "value": "__sqlAdGroupObjectID__"
+    },
+    "virtualNetworkRoutedSubnets": {
+      "value": __virtualNetworkRoutedSubnets__
+    },
+    "virtualNetworkNonRoutedSubnets": {
+      "value": __virtualNetworkNonRoutedSubnets__
+    },
+    "threatDetectionEmailAddress": {
+      "value": __threatDetectionEmailAddress__
+    },
+    "vnetResourceGroup": {
+      "value": "__vnetResourceGroup__"
+    },
+    "appGatewayNetworkSecurityGroup": {
+      "value": "__appGatewayNsgName__"
+    },
+    "appGatewayVnetName": {
+      "value": "__appGatewayVnetName__"
+    },
+    "appGatewaySubnetName": {
+      "value": "__appGatewaySubnetName__"
+    },
+    "appGatewayIncomingIpAddressRange": {
+      "value": "__appGatewayIncomingIpRange__"
+    },
+    "appGatewayCloudServiceIpAddress": {
+      "value": "__appGatewayCloudServiceIpAddress__"
+    }
+  }
+}
