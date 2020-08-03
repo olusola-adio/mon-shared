@@ -1,6 +1,6 @@
 # mon-shared
 
-[![Build Status](https://dev.azure.com/olusolaadio/mon-olu/_apis/build/status/olusola-adio.mon-shared?branchName=master)](https://dev.azure.com/olusolaadio/mon-olu/_build/latest?definitionId=5&branchName=master)
+[![Build Status](https://dev.azure.com/logion-mon/mon/_apis/build/status/mon-shared?branchName=master)](https://dev.azure.com/logion-mon/mon/_build/latest?definitionId=5&branchName=master)
 
 Repository with all the shared Azure resources used across the DFC services.
 Each environment (DEV, LAB, SIT, PP and PRD) will have its own shared resources.
