@@ -4,7 +4,7 @@
 
 variables:
 - name: SolutionBaseName
-  value: Dfc.Shared
+  value: Mon.Shared
 
 resources:
   repositories:
@@ -48,7 +48,7 @@ stages:
       displayName: Publish PSScripts Pipeline Artifact
       inputs:
         targetPath: $(Build.ArtifactStagingDirectory)/Resources/PSScripts
-        artifactName: Dfc.Shared.Resources.PSScripts
+        artifactName: Mon.Shared.Resources.PSScripts
     # - task: CopyFiles@2
     #   displayName: 'Copy Tempklate Files to: $(Build.ArtifactStagingDirectory)'
     #   inputs:
@@ -64,7 +64,7 @@ stages:
       displayName: Publish AksManifests Pipeline Artifact
       inputs:
         targetPath: Resources/AksManifests
-        artifactName: Dfc.Shared.Resources.AksManifests
+        artifactName: Mon.Shared.Resources.AksManifests
     - task: ArchiveFiles@2
       displayName: 'Archive FunctionApp'
       inputs:
