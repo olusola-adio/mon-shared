@@ -5,7 +5,10 @@ Removes an Sql Server
 .DESCRIPTION
 Removes an Sql Server
 
-.PARAMETER ResourceGroupName
+.PARAMETER ContainerResourceGroupName
+The name of the resource group
+
+.PARAMETER KeyVaultResourceGroupName
 The name of the resource group
 
 .PARAMETER ContainerRegistryName
@@ -22,7 +25,9 @@ Add theserver nae
 [CmdletBinding()]
 param(
     [Parameter(Mandatory=$true)]
-    [String]$ResourceGroupName,
+    [String]$ContainerResourceGroupName,
+    [Parameter(Mandatory=$true)]
+    [String]$KeyVaultResourceGroupName,
     [Parameter(Mandatory=$true)]
     [String]$ContainerRegistryName,
     [Parameter(Mandatory=$true)]
@@ -31,7 +36,7 @@ param(
     [String]$KeyName
 )
 
-$registry = Get-AzContainerRegistry -Name $ContainerRegistryName -ResourceGroupName $ResourceGroupName
+$registry = Get-AzContainerRegistry -Name $ContainerRegistryName -ResourceGroupName $ContainerResourceGroupName
 if (!$registry) {
 
     Write-Verbose "$($ContainerRegistryName) container registry not found"
@@ -39,7 +44,7 @@ if (!$registry) {
 
 }
 
-$keyVault = Get-AzKeyVault -VaultName $KeyVaultName -ResourceGroupName $ResourceGroupName
+$keyVault = Get-AzKeyVault -VaultName $KeyVaultName -ResourceGroupName $KeyVaultResourceGroupName
 if (!$keyVault) {
 
     Write-Verbose "$($keyVault) key vault  not found"
