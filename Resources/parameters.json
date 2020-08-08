@@ -67,12 +67,6 @@
     },
     "environmentName": {
       "value": "__ReleaseEnvironmentName__"
-    },
-    "virtualNetworkRoutedSubnets": {
-      "value": __virtualNetworkRoutedSubnets__
-    },
-    "virtualNetworkNonRoutedSubnets": {
-      "value": __virtualNetworkNonRoutedSubnets__
     }
   }
 }
