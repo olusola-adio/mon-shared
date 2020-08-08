@@ -49,33 +49,12 @@ stages:
       inputs:
         targetPath: $(Build.ArtifactStagingDirectory)/Resources/PSScripts
         artifactName: Mon.Shared.Resources.PSScripts
-    # - task: CopyFiles@2
-    #   displayName: 'Copy Tempklate Files to: $(Build.ArtifactStagingDirectory)'
-    #   inputs:
-    #     Contents: 'Resources/*.json'
-    #     TargetFolder: '$(Build.ArtifactStagingDirectory)/Templates'
-    #     flattenFolders: true
-    # - task: PublishPipelineArtifact@0
-    #   displayName: Publish ArmTemplates Pipeline Artifact
-    #   inputs:
-    #     targetPath: $(Build.ArtifactStagingDirectory)/Templates
-    #     artifactName: Dfc.Shared.Resources.Templates
     - task: PublishPipelineArtifact@0
       displayName: Publish AksManifests Pipeline Artifact
       inputs:
         targetPath: Resources/AksManifests
         artifactName: Mon.Shared.Resources.AksManifests
-    - task: ArchiveFiles@2
-      displayName: 'Archive FunctionApp'
-      inputs:
-        rootFolderOrFile: FunctionApp
-        includeRootFolder: false
-        archiveFile: '$(System.DefaultWorkingDirectory)/zip/FunctionApp.zip'
-    - task: PublishPipelineArtifact@0
-      displayName: Publish FunctionApp Pipeline Artifact
-      inputs:
-        artifactName: 'zip'
-        targetPath: '$(System.DefaultWorkingDirectory)/zip'
+
 
 - stage: DeployTo_DEV
   condition: false
