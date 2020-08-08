@@ -65,9 +65,6 @@
     },
     "defaultKeyVaultWriteAccess": {
       "value": []
-    },
-    "environmentName": {
-      "value": "DEV"
     }
   }
 }

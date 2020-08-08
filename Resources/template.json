@@ -85,62 +85,18 @@
       "metadata": {
         "description": "A list of azure service pricipals to assign write access to certificates on the shared key vault"
       }
-    },
-    "environmentName": {
-      "type": "string",
-      "allowedValues": [
-        "DEV",
-        "SIT",
-        "LAB",
-        "OAT",
-        "PP",
-        "PRD"
-      ]
     }
   },
   "variables": {
     "monDevOpsTemplatesUrl": "https://raw.githubusercontent.com/olusola-adio/mon-devops/master/ArmTemplates/",
     "localTemplatesUrl": "https://raw.githubusercontent.com/olusola-adio/mon-shared/master/Resources/",
     "keyVaultName": "[concat(parameters('sharedPrefix'),'-kv')]",
-    "storageAccountName": "[concat(replace(parameters('sharedPrefix'),'-',''),'str')]",
-    "functionAppName": "[concat(parameters('sharedPrefix'),'-fa')]",
-    "functionAppInsightName": "[concat(parameters('sharedPrefix'),'-ai')]",
-    "appServicePlanName": "[concat(parameters('sharedPrefix'),'-asp')]",
     "defaultKeyVaultReadAccessHack": "[if(empty(parameters('defaultKeyVaultReadAccess')), 1, length(parameters('defaultKeyVaultReadAccess')))]",
     "defaultKeyVaultWriteAccessHack": "[if(empty(parameters('defaultKeyVaultWriteAccess')), 1, length(parameters('defaultKeyVaultWriteAccess')))]",
-    "containerRegistryName": "[toLower(concat(replace(parameters('sharedPrefix'),'-',''),'cr'))]",
     "aksClusterName": "[concat(parameters('sharedPrefix'), '-aks')]",
     "aksNodeResourceGroupName": "[concat(variables('aksClusterName'), 'nodes-rg')]"
   },
   "resources": [
-    {
-      "name": "containerRegistry",
-      "type": "Microsoft.Resources/deployments",
-      "condition": "[or(equals(parameters('environmentName'), 'DEV'), equals(parameters('environmentName'), 'PRD'))]",
-      "apiVersion": "2017-05-10",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('monDevOpsTemplatesUrl'), 'container-registry.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "containerRegistryName": {
-            "value": "[variables('containerRegistryName')]"
-          }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccountName')]",
-      "apiVersion": "2019-04-01",
-      "location": "[resourceGroup().location]",
-      "sku": {
-        "name": "Standard_LRS"
-      },
-      "kind": "StorageV2"
-    },
     {
       "name": "sharedAzureKubernetesServiceNetwork",
       "type": "Microsoft.Resources/deployments",
@@ -350,91 +306,6 @@
         "mode": "Serial",
         "batchSize": 1
       }
-    },
-    {
-      "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2018-02-01",
-      "name": "[variables('appServicePlanName')]",
-      "location": "[resourceGroup().location]",
-      "sku": {
-          "name": "Y1",
-          "tier": "Dynamic"
-      },
-      "properties": {
-          "name": "[variables('appServicePlanName')]",
-          "computeMode": "Dynamic"
-      }
-    },
-    {
-      "apiVersion": "2017-05-10",
-      "name": "[variables('functionAppInsightName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('monDevOpsTemplatesUrl'), 'application-insights.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appInsightsName": {
-            "value": "[variables('functionAppInsightName')]"
-          },
-          "attachedService": {
-            "value": ""
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2015-08-01",
-      "type": "Microsoft.Web/sites",
-      "name": "[variables('functionAppName')]",
-      "location": "[resourceGroup().location]",
-      "kind": "functionapp",
-      "dependsOn": [
-          "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
-          "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-          "[variables('functionAppInsightName')]"
-      ],
-      "properties": {
-          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
-          "siteConfig": {
-              "appSettings": [
-                  {
-                      "name": "AzureWebJobsDashboard",
-                      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountName'),'2015-05-01-preview').key1)]"
-                  },
-                  {
-                      "name": "AzureWebJobsStorage",
-                      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountName'),'2015-05-01-preview').key1)]"
-                  },
-                  {
-                      "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountName'),'2015-05-01-preview').key1)]"
-                  },
-                  {
-                      "name": "WEBSITE_CONTENTSHARE",
-                      "value": "[toLower(variables('functionAppName'))]"
-                  },
-                  {
-                      "name": "FUNCTIONS_EXTENSION_VERSION",
-                      "value": "~3"
-                  },
-                  {
-                      "name": "WEBSITE_NODE_DEFAULT_VERSION",
-                      "value": "8.11.1"
-                  },
-                  {
-                      "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                      "value": "[reference(variables('functionAppInsightName')).outputs.InstrumentationKey.value]"
-                  },
-                  {
-                      "name": "FUNCTIONS_WORKER_RUNTIME",
-                      "value": "powershell"
-                  }
-              ]
-          }
-      }
     }
   ],
   "outputs": {
@@ -445,10 +316,6 @@
     "KeyVaultUri": {
       "type": "string",
       "value": "[reference('sharedKeyVault','2017-05-10').outputs.KeyVaultUri.value]"
-    },
-    "storageAccountName": {
-      "type": "string",
-      "value": "[variables('storageAccountName')]"
     }
   }
 }
