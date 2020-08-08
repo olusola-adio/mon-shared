@@ -56,9 +56,6 @@
     "aksAppGatewaySubnetName": {
       "value": "mon-aks-ag-01"
     },
-    "aksAppGatewayNetworkSecurityGroup": {
-      "value": "mon-local-aksag-nsg"
-    },
     "defaultKeyVaultReadAccess": {
       "value": [
         "4d2471e2-510f-4d6e-a4b3-1f356b45c034",
@@ -71,9 +68,6 @@
     },
     "environmentName": {
       "value": "DEV"
-    },
-    "vnetResourceGroup": {
-      "value": "mon-local-shared-rg"
     }
   }
 }

@@ -59,9 +59,6 @@
     "aksAppGatewaySubnetName": {
       "value": "__aksAppGatewaySubnetName__"
     },
-    "aksAppGatewayNetworkSecurityGroup": {
-      "value": "__aksAppGatewayNetworkSecurityGroup__"
-    },
     "defaultKeyVaultReadAccess": {
       "value": __defaultKeyVaultReadAccess__
     },
@@ -76,9 +73,6 @@
     },
     "virtualNetworkNonRoutedSubnets": {
       "value": __virtualNetworkNonRoutedSubnets__
-    },
-    "vnetResourceGroup": {
-      "value": "__vnetResourceGroup__"
     }
   }
 }
