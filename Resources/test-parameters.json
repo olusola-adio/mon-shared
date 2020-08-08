@@ -5,12 +5,6 @@
     "sharedPrefix": {
       "value": "mon-local-shared"
     },
-    "apimExists": {
-      "value": false
-    },
-    "deployApim": {
-      "value": false
-    },
     "aksAgentVmSize": {
       "value": "Standard_DS1_v2"
     },
@@ -65,45 +59,6 @@
     "aksAppGatewayNetworkSecurityGroup": {
       "value": "mon-local-aksag-nsg"
     },
-    "apimHostnameRoot": {
-      "value": "api.notarealservice.org.uk"
-    },
-    "apimPortalKeyVaultCertificatePath": {
-      "value": "https://mon-foo-shared-kv.vault.azure.net/certificates/wildcard-mon-notarealservice-org-uk/identifierstringabc123"
-    },
-    "apimProxyKeyVaultCertificatePath": {
-      "value": "https://mon-foo-shared-kv.vault.azure.net/certificates/wildcard-mon-notarealservice-org-uk/identifierstringabc123"
-    },
-    "apimNetworkSecurityGroup": {
-      "value": ""
-    },
-    "apimSubnetName": {
-      "value": ""
-    },
-    "apimSkuTier": {
-      "value": "Developer"
-    },
-    "apimVnetName": {
-      "value": ""
-    },
-    "apimVNetResourceGroupName": {
-      "value": ""
-    },
-    "aseDomainName": {
-      "value": ""
-    },
-    "aseNetworkSecurityGroup": {
-      "value": ""
-    },
-    "aseSubnetName": {
-      "value": ""
-    },
-    "aseVnetName": {
-      "value": ""
-    },
-    "aseVNetResourceGroupName": {
-      "value": ""
-    },
     "defaultKeyVaultReadAccess": {
       "value": [
         "4d2471e2-510f-4d6e-a4b3-1f356b45c034",
@@ -117,46 +72,8 @@
     "environmentName": {
       "value": "DEV"
     },
-    "envType": {
-      "value": "dev"
-    },
-    "sqlServerAdminPassword": {
-      "value": "not-real-1980!"
-    },
-    "sqlServerAdminUserName": {
-      "value": "local_usr"
-    },
-    "sqlServerActiveDirectoryAdminLogin": {
-      "value": "AD_GRP_NAME"
-    },
-    "sqlServerActiveDirectoryAdminObjectId": {
-      "value": "12345678-abcd-abcd-abcd-1234567890ab"
-    },
-    "virtualNetworkRoutedSubnets": {
-      "value": [
-        "mon-local-ase",
-        "mon-local-apim"
-      ]
-    },
-    "virtualNetworkNonRoutedSubnets": {
-      "value": [
-        "mon-local-ag"
-      ]
-    },
-    "threatDetectionEmailAddress": {
-      "value": []
-    },
     "vnetResourceGroup": {
       "value": "mon-local-shared-rg"
-    },
-    "appGatewayNetworkSecurityGroup": {
-      "value": "mon-local-appgateway-nsg"
-    },
-    "appGatewaySubnetName": {
-      "value": "mon-ag-01"
-    },
-    "appGatewayCloudServiceIpAddress": {
-      "value": "4.4.4.4"
     }
   }
 }
