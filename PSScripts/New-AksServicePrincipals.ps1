@@ -26,7 +26,7 @@ The service principal requires this role on the resource group it's VNet is depl
 .PARAMETER AksResourceGroup
 The resource group that will hold the AKS service and it's VNet
 
-.PARAMETER DfcDevOpsScriptRoot
+.PARAMETER MonDevOpsScriptRoot
 The path to the PSScripts folder in the local copy of the mon-devops repo, eg $(System.DefaultWorkingDirectory)/_olusola-adio_mon-devops/PSScripts in an Azure DevOps task
 
 .PARAMETER SharedKeyVaultName
@@ -51,7 +51,7 @@ param(
     [Parameter(Mandatory = $true)]
     [String]$AksServicePrincipalName,
     [Parameter(Mandatory = $true)]
-    [String]$DfcDevOpsScriptRoot,
+    [String]$MonDevOpsScriptRoot,
     [Parameter(Mandatory = $true)]
     [String]$SharedKeyVaultName
 )
@@ -86,7 +86,7 @@ function Set-SpnResourceGroupRoleAssignment {
     }
 }
 
-$LogFile = New-Item -Path $DfcDevOpsScriptRoot -Name "$Env:Environment_Name-Logfile.log" -Force
+$LogFile = New-Item -Path $MonDevOpsScriptRoot -Name "$Env:Environment_Name-Logfile.log" -Force
 Start-Transcript -Path $LogFile
 
 $Context = Get-AzureRmContext
@@ -106,7 +106,7 @@ if (!(Get-AzureRmRoleDefinition -Name "Resource Group Contributor")) {
 }
 
 # Create Service Principal with Contributor on AKS resource group and Resource Group Contributor on the Subscription.  AKS needs to be able to create the resource group that contains it's nodes, the ARM deployment will error if this resource group has already been created.
-$AksServicePrincipal = & "$DfcDevOpsScriptRoot/New-ApplicationRegistration.ps1" -AppRegistrationName $AksServicePrincipalName -AddSecret -KeyVaultName $SharedKeyVaultName -Verbose
+$AksServicePrincipal = & "$MonDevOpsScriptRoot/New-ApplicationRegistration.ps1" -AppRegistrationName $AksServicePrincipalName -AddSecret -KeyVaultName $SharedKeyVaultName -Verbose
 $ExistingAssignment = Get-AzureRmRoleAssignment -ObjectId $AksServicePrincipal.Id -RoleDefinitionName "Resource Group Contributor" -Scope "/subscriptions/$($Context.Subscription.Id)"
 if ($ExistingAssignment) {
 
@@ -135,18 +135,18 @@ Write-Verbose "Writing AksServicePrincipal ApplicationId value [$($AksServicePri
 Write-Output "##vso[task.setvariable variable=AksServicePrincipalClientId]$($AksServicePrincipal.ApplicationId)"
 
 # Create Service Principal with Delegated Permissions Directory.Read.All & User.Read and Application Permissions Directory.Read.All
-$AksAdServerApplication = & $DfcDevOpsScriptRoot/New-ApplicationRegistration.ps1 -AppRegistrationName $AksAdServerApplicationName -AddSecret -KeyVaultName $SharedKeyVaultName -Verbose
+$AksAdServerApplication = & $MonDevOpsScriptRoot/New-ApplicationRegistration.ps1 -AppRegistrationName $AksAdServerApplicationName -AddSecret -KeyVaultName $SharedKeyVaultName -Verbose
 # Service Principal isn't immediately available to add API permissions to
 Start-Sleep -Seconds 15
-& $DfcDevOpsScriptRoot/Add-AzureAdApiPermissionsToApp.ps1 -AppRegistrationDisplayName $AksAdServerApplicationName -ApiName "Microsoft Graph" -ApplicationPermissions "Directory.Read.All" -DelegatedPermissions "Directory.Read.All", "User.Read" -Verbose
+& $MonDevOpsScriptRoot/Add-AzureAdApiPermissionsToApp.ps1 -AppRegistrationDisplayName $AksAdServerApplicationName -ApiName "Microsoft Graph" -ApplicationPermissions "Directory.Read.All" -DelegatedPermissions "Directory.Read.All", "User.Read" -Verbose
 Write-Verbose "Writing AksAdServerApplication ApplicationId value [$($AksAdServerApplication.ApplicationId)] to variable AksRbacServerAppId"
 Write-Output "##vso[task.setvariable variable=AksRbacServerAppId]$($AksAdServerApplication.ApplicationId)"
 
 # Create Service Principal with Delegated user_impersonation on $AksAdServerApplication
-$AksAdClientApplicationSpn = & $DfcDevOpsScriptRoot/New-ApplicationRegistration.ps1 -AppRegistrationName $AksAdClientApplicationName -Verbose
+$AksAdClientApplicationSpn = & $MonDevOpsScriptRoot/New-ApplicationRegistration.ps1 -AppRegistrationName $AksAdClientApplicationName -Verbose
 # Service Principal isn't immediately available to add API permissions to
 Start-Sleep -Seconds 15
-& $DfcDevOpsScriptRoot/Add-AzureAdApiPermissionsToApp.ps1 -AppRegistrationDisplayName $AksAdClientApplicationName -ApiName $AksAdServerApplication.DisplayName -DelegatedPermissions "user_impersonation" -Verbose
+& $MonDevOpsScriptRoot/Add-AzureAdApiPermissionsToApp.ps1 -AppRegistrationDisplayName $AksAdClientApplicationName -ApiName $AksAdServerApplication.DisplayName -DelegatedPermissions "user_impersonation" -Verbose
 # Set the allowPublicClient property of the App Registration to true.  This step depends on the token for Microsoft Graph obtained during the execution of Add-AzureAdApiPermissionsToApp.ps1
 $AksAdClientApplication = Get-AzureRmADApplication -DisplayName $AksAdClientApplicationSpn.DisplayName
 Write-Verbose "Setting allowPublicClient on $($AksAdClientApplicationSpn.DisplayName) [$($AksAdClientApplication.ObjectId)] to true"

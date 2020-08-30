@@ -2,7 +2,7 @@
 
 [![Build Status](https://dev.azure.com/logion-mon/mon/_apis/build/status/mon-shared?branchName=master)](https://dev.azure.com/logion-mon/mon/_build/latest?definitionId=5&branchName=master)
 
-Repository with all the shared Azure resources used across the DFC services.
+Repository with all the shared Azure resources used across the Mon services.
 Each environment (DEV, LAB, SIT, PP and PRD) will have its own shared resources.
 
 Deployed using the comnbination of a template file and a parameters file.

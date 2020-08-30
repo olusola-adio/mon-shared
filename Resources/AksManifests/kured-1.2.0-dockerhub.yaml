@@ -108,7 +108,7 @@ spec:
             #- --start-time="01:00"
             #- --end-time="04:00"
             #- --slack-channel=mon-devops-alerts
-            - --slack-hook-url=__DfcDevOpsAlertsSlackHook__
+            - --slack-hook-url=__MonDevOpsAlertsSlackHook__
             #- --slack-username=kured
 #            - --alert-filter-regexp=^RebootRequired$
 #            - --blocking-pod-selector=runtime=long,cost=expensive
