@@ -8,7 +8,7 @@ rules:
 # Allow kubectl to drain/uncordon
 #
 # NB: These permissions are tightly coupled to the bundled version of kubectl; the ones below
-# match https://github.com/kubernetes/kubernetes/blob/v1.12.1/pkg/kubectl/cmd/drain.go
+# match https://github.com/kubernetes/kubernetes/blob/v1.17.7/staging/src/k8s.io/kubectl/pkg/cmd/drain/drain.go
 #
 - apiGroups: [""]
   resources: ["nodes"]
@@ -62,6 +62,7 @@ roleRef:
   kind: Role
   name: kured
 ---
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -92,7 +93,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: kured
-          image: docker.io/weaveworks/kured:1.3.0
+          image: docker.io/weaveworks/kured:1.4.4
                  # If you find yourself here wondering why there is no
                  # :latest tag on Docker Hub,see the FAQ in the README
           imagePullPolicy: IfNotPresent
@@ -107,20 +108,21 @@ spec:
                   fieldPath: spec.nodeName
           command:
             - /usr/bin/kured
-            #- --start-time="01:00"
-            #- --end-time="04:00"
-            #- --slack-channel=mon-devops-alerts
-            - --slack-hook-url=__MonDevOpsAlertsSlackHook__
-            #- --slack-username=kured
 #            - --alert-filter-regexp=^RebootRequired$
 #            - --blocking-pod-selector=runtime=long,cost=expensive
 #            - --blocking-pod-selector=name=temperamental
 #            - --blocking-pod-selector=...
 #            - --ds-name=kured
 #            - --ds-namespace=kube-system
+#            - --end-time=23:59:59
 #            - --lock-annotation=weave.works/kured-node-lock
             - --period=0h5m0s
 #            - --prometheus-url=http://prometheus.monitoring.svc.cluster.local
+#            - --reboot-days=sun,mon,tue,wed,thu,fri,sat
 #            - --reboot-sentinel=/var/run/reboot-required
-#            
+            - --slack-hook-url=__MonDevOpsAlertsSlackHook__
 #            - --slack-username=prod
+#            - --slack-channel=alerting
+#            - --start-time=0:00
+#            - --time-zone=UTC
+
