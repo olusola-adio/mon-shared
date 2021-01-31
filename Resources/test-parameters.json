@@ -6,7 +6,7 @@
       "value": "mon-local-shared"
     },
     "aksAgentVmSize": {
-      "value": "Standard_DS1_v2"
+      "value": "Standard_B2s"
     },
     "aksAgentNodeCount": {
       "value": 2
