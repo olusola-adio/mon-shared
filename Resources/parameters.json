@@ -64,6 +64,9 @@
     },
     "defaultKeyVaultWriteAccess": {
       "value": __certificateKeyVaultWriteAccess__
+    },
+    "aadProfileAdminGroupObjectIDs": {
+      "value": __aadProfileAdminGroupObjectIDs__
     }
   }
 }
