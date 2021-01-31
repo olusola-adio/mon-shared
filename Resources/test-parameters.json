@@ -20,15 +20,6 @@
     "aksNodeResourceGroupName": {
       "value": "mon-foo-stax-shared-aksnodes-rg"
     },
-    "aksRbacClientAppId": {
-      "value": "__AksRbacClientAppId__"
-    },
-    "aksRbacServerAppId": {
-      "value": "__AksRbacServerAppId__"
-    },
-    "aksRbacServerAppSecret": {
-      "value": "__AksRbacServerAppSecret__"
-    },
     "aksRbacTenantId": {
       "value": "__AksRbacTenantId__"
     },

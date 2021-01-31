@@ -23,15 +23,6 @@
     "aksNodeResourceGroupName": {
       "type": "string"
     },
-    "aksRbacClientAppId": {
-      "type": "string"
-    },
-    "aksRbacServerAppId": {
-      "type": "string"
-    },
-    "aksRbacServerAppSecret": {
-      "type": "securestring"
-    },
     "aksRbacTenantId": {
       "type": "string"
     },
@@ -186,15 +177,6 @@
           },
           "nodeResourceGroup": {
             "value": "[variables('aksNodeResourceGroupName')]"
-          },
-          "rbacClientAppId": {
-            "value": "[parameters('aksRbacClientAppId')]"
-          },
-          "rbacServerAppId": {
-            "value": "[parameters('aksRbacServerAppId')]"
-          },
-          "rbacServerAppSecret": {
-            "value": "[parameters('aksRbacServerAppSecret')]"
           },
           "rbacTenantId": {
             "value": "[parameters('aksRbacTenantId')]"
