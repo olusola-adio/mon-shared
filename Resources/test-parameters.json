@@ -6,7 +6,7 @@
       "value": "mon-local-shared"
     },
     "aksAgentVmSize": {
-      "value": "Standard_DS1_v2"
+      "value": "Standard_B2s"
     },
     "aksAgentNodeCount": {
       "value": 2
@@ -15,19 +15,10 @@
       "value": "10.2.5.10"
     },
     "aksKubernetesVersion": {
-      "value": "1.15.11"
+      "value": "1.21.2"
     },
     "aksNodeResourceGroupName": {
       "value": "mon-foo-stax-shared-aksnodes-rg"
-    },
-    "aksRbacClientAppId": {
-      "value": "__AksRbacClientAppId__"
-    },
-    "aksRbacServerAppId": {
-      "value": "__AksRbacServerAppId__"
-    },
-    "aksRbacServerAppSecret": {
-      "value": "__AksRbacServerAppSecret__"
     },
     "aksRbacTenantId": {
       "value": "__AksRbacTenantId__"
@@ -65,6 +56,18 @@
     },
     "defaultKeyVaultWriteAccess": {
       "value": []
+    },
+    "aadProfileAdminGroupObjectIDs": {
+      "value": []
+    },
+    "aadEnabled": {
+      "value": true
+    },
+    "aadProfileManaged": {
+      "value": true
+    },
+    "aadProfileEnableAzureRBAC": {
+      "value": false
     }
   }
 }

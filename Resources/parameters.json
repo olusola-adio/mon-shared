@@ -20,15 +20,6 @@
     "aksNodeResourceGroupName": {
       "value": "__AksNodeResourceGroupName__"
     },
-    "aksRbacClientAppId": {
-      "value": "__AksRbacClientAppId__"
-    },
-    "aksRbacServerAppId": {
-      "value": "__AksRbacServerAppId__"
-    },
-    "aksRbacServerAppSecret": {
-      "value": "__AksRbacServerAppSecret__"
-    },
     "aksRbacTenantId": {
       "value": "__AksRbacTenantId__"
     },
@@ -64,6 +55,12 @@
     },
     "defaultKeyVaultWriteAccess": {
       "value": __certificateKeyVaultWriteAccess__
+    },
+    "aadProfileAdminGroupObjectIDs": {
+      "value": __aadProfileAdminGroupObjectIDs__
+    },
+    "aadProfileEnableAzureRBAC":{
+      "value": __aadProfileEnableAzureRBAC__
     }
   }
 }

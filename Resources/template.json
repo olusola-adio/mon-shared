@@ -23,15 +23,6 @@
     "aksNodeResourceGroupName": {
       "type": "string"
     },
-    "aksRbacClientAppId": {
-      "type": "string"
-    },
-    "aksRbacServerAppId": {
-      "type": "string"
-    },
-    "aksRbacServerAppSecret": {
-      "type": "securestring"
-    },
     "aksRbacTenantId": {
       "type": "string"
     },
@@ -84,6 +75,34 @@
       ],
       "metadata": {
         "description": "A list of azure service pricipals to assign write access to certificates on the shared key vault"
+      }
+    },
+    "aadEnabled": {
+      "defaultValue": true,
+      "type": "bool",
+      "metadata": {
+        "description": "Specifies whether enabling AAD integration."
+      }
+    },
+    "aadProfileAdminGroupObjectIDs": {
+      "defaultValue": [],
+      "type": "array",
+      "metadata": {
+        "description": "Specifies the AAD group object IDs that will have admin role of the cluster."
+      }
+    },
+    "aadProfileManaged": {
+      "defaultValue": true,
+      "type": "bool",
+      "metadata": {
+        "description": "Specifies whether to enable managed AAD integration."
+      }
+    },
+    "aadProfileEnableAzureRBAC": {
+      "defaultValue": true,
+      "type": "bool",
+      "metadata": {
+        "description": "Specifies whether to  to enable Azure RBAC for Kubernetes authorization."
       }
     }
   },
@@ -159,15 +178,6 @@
           "nodeResourceGroup": {
             "value": "[variables('aksNodeResourceGroupName')]"
           },
-          "rbacClientAppId": {
-            "value": "[parameters('aksRbacClientAppId')]"
-          },
-          "rbacServerAppId": {
-            "value": "[parameters('aksRbacServerAppId')]"
-          },
-          "rbacServerAppSecret": {
-            "value": "[parameters('aksRbacServerAppSecret')]"
-          },
           "rbacTenantId": {
             "value": "[parameters('aksRbacTenantId')]"
           },
@@ -188,6 +198,18 @@
           },
           "virtualNetworkResourceGroup": {
             "value": "[if(parameters('aksVnetCreate'), resourceGroup().name, parameters('aksVnetResourceGroupName'))]"
+          },
+          "aadEnabled": {
+            "value": "[parameters('aadEnabled')]"
+          },
+          "aadProfileAdminGroupObjectIDs": {
+            "value": "[parameters('aadProfileAdminGroupObjectIDs')]"
+          },
+          "aadProfileManaged": {
+            "value": "[parameters('aadProfileManaged')]"
+          },
+          "aadProfileEnableAzureRBAC": {
+            "value": "[parameters('aadProfileEnableAzureRBAC')]"
           }
         }
       },
