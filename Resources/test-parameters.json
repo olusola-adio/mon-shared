@@ -29,12 +29,6 @@
     "aksServiceCidr": {
       "value": "__AksServiceCidr__"
     },
-    "aksServicePrincipalClientId": {
-      "value": "__AksServicePrincipalClientId__"
-    },
-    "aksServicePrincipalSecret": {
-      "value": "__AksServicePrincipalSecret__"
-    },
     "aksSubnetName": {
       "value": "mon-aks-01"
     },
@@ -59,15 +53,6 @@
     },
     "aadProfileAdminGroupObjectIDs": {
       "value": []
-    },
-    "aadEnabled": {
-      "value": true
-    },
-    "aadProfileManaged": {
-      "value": true
-    },
-    "aadProfileEnableAzureRBAC": {
-      "value": false
     }
   }
 }
