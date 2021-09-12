@@ -58,9 +58,6 @@
     },
     "aadProfileAdminGroupObjectIDs": {
       "value": __aadProfileAdminGroupObjectIDs__
-    },
-    "aadProfileEnableAzureRBAC":{
-      "value": __aadProfileEnableAzureRBAC__
     }
   }
 }
