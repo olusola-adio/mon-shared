@@ -5,7 +5,7 @@ metadata:
   name: read-pods-global
 subjects:
 - kind: Group
-  name: "__AksPodReaderGroupObjectId__" # Name is case sensitive
+  name: __AksPodReaderGroupObjectId__ # Name is case sensitive
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole
