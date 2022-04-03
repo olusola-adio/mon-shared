@@ -15,7 +15,7 @@
       "value": "10.2.5.10"
     },
     "aksKubernetesVersion": {
-      "value": "1.18.19"
+      "value": "1.22.4"
     },
     "aksNodeResourceGroupName": {
       "value": "mon-foo-stax-shared-aksnodes-rg"
