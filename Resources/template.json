@@ -193,7 +193,8 @@
         }
       },
       "dependsOn": [
-        "sharedAzureKubernetesServiceNetwork"
+        "sharedAzureKubernetesServiceNetwork",
+        "[variables('logAnalyticsWorkspaceName')]"
       ]
     },
     {
